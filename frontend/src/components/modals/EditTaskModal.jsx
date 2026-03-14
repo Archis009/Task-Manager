@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { X, Trash2, Plus } from 'lucide-react';
+import { X, Trash2, Plus, Clock, Activity } from 'lucide-react';
 import { updateTask, deleteTask } from '@/features/tasks/tasksSlice';
 import toast from 'react-hot-toast';
 
@@ -236,6 +236,35 @@ export default function EditTaskModal({ isOpen, onClose, task }) {
                 ))}
               </div>
             )}
+          </div>
+
+          <div>
+            <div className="flex items-center gap-2 mb-3 border-b border-gray-100 pb-2">
+              <Activity className="h-4 w-4 text-purple-600" />
+              <label className="text-sm font-medium text-gray-900">Activity Log</label>
+            </div>
+            
+            <div className="bg-gray-50 rounded-lg p-4 max-h-48 overflow-y-auto space-y-3 shadow-inner">
+              {task?.activityLog && task.activityLog.length > 0 ? (
+                // Reverse to show newest changes at the top
+                [...task.activityLog].reverse().map((log) => (
+                  <div key={log.id} className="flex items-start gap-3">
+                    <div className="mt-0.5 min-w-[32px] flex justify-center">
+                      <div className="h-2 w-2 rounded-full bg-purple-400 mt-1.5 ring-4 ring-purple-100"></div>
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-[13px] text-gray-800 font-medium">{log.message}</p>
+                      <div className="flex items-center gap-1 mt-0.5 text-[11px] text-gray-500">
+                        <Clock className="h-3 w-3" />
+                        <span>{new Date(log.timestamp).toLocaleString()}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p className="text-xs text-gray-500 italic text-center py-2">No recorded activity.</p>
+              )}
+            </div>
           </div>
 
           <div className="mt-8 flex items-center justify-between">

@@ -32,6 +32,7 @@ const initialTasks = [
     order: 0,
     dueDate: today,
     tags: ['UX', 'Planning'],
+    activityLog: [{ id: 'log-task-1', message: 'Task created', timestamp: new Date().toISOString() }],
   },
   {
     id: 'task-2',
@@ -45,6 +46,7 @@ const initialTasks = [
     order: 1,
     dueDate: tomorrow,
     tags: ['Data', 'MVP'],
+    activityLog: [{ id: 'log-task-2', message: 'Task created', timestamp: new Date().toISOString() }],
   },
   {
     id: 'task-3',
@@ -58,6 +60,7 @@ const initialTasks = [
     order: 2,
     dueDate: today,
     tags: ['Design', 'Core'],
+    activityLog: [{ id: 'log-task-3', message: 'Task created', timestamp: new Date().toISOString() }],
   },
   {
     id: 'task-4',
@@ -71,6 +74,7 @@ const initialTasks = [
     order: 0,
     dueDate: yesterday,
     tags: ['API'],
+    activityLog: [{ id: 'log-task-4', message: 'Task created', timestamp: new Date().toISOString() }],
   },
   {
     id: 'task-5',
@@ -84,6 +88,7 @@ const initialTasks = [
     order: 0,
     dueDate: today,
     tags: ['Phase 1'],
+    activityLog: [{ id: 'log-task-5', message: 'Task created', timestamp: new Date().toISOString() }],
   },
   {
     id: 'task-6',
@@ -97,6 +102,7 @@ const initialTasks = [
     order: 1,
     dueDate: yesterday,
     tags: ['UI', 'Phase 1'],
+    activityLog: [{ id: 'log-task-6', message: 'Task created', timestamp: new Date().toISOString() }],
   }
 ];
 
@@ -104,8 +110,52 @@ const tasksSlice = createSlice({
   name: 'tasks',
   initialState: tasksAdapter.setAll(initialState, initialTasks),
   reducers: {
-    addTask: tasksAdapter.addOne,
-    updateTask: tasksAdapter.updateOne,
+    addTask: (state, action) => {
+      const task = {
+        ...action.payload,
+        activityLog: [{ id: `log-${Date.now()}`, message: 'Task created', timestamp: new Date().toISOString() }]
+      };
+      tasksAdapter.addOne(state, task);
+    },
+    updateTask: (state, action) => {
+      const { id, changes } = action.payload;
+      const existingTask = state.entities[id];
+      
+      if (existingTask) {
+        const newLogs = [];
+        
+        // Check for specific field changes to generate human-readable logs
+        if (changes.status && changes.status !== existingTask.status) {
+          newLogs.push({ id: `log-${Date.now()}-status`, message: `Moved task to ${changes.status}`, timestamp: new Date().toISOString() });
+        }
+        if (changes.priority && changes.priority !== existingTask.priority) {
+          newLogs.push({ id: `log-${Date.now()}-priority`, message: `Changed priority from ${existingTask.priority} to ${changes.priority}`, timestamp: new Date().toISOString() });
+        }
+        if (changes.title && changes.title !== existingTask.title) {
+          newLogs.push({ id: `log-${Date.now()}-title`, message: `Renamed task to "${changes.title}"`, timestamp: new Date().toISOString() });
+        }
+        if (changes.dueDate !== undefined && changes.dueDate !== existingTask.dueDate) {
+          if (changes.dueDate) {
+            newLogs.push({ id: `log-${Date.now()}-date`, message: `Set due date to ${changes.dueDate}`, timestamp: new Date().toISOString() });
+          } else {
+            newLogs.push({ id: `log-${Date.now()}-date`, message: `Removed due date`, timestamp: new Date().toISOString() });
+          }
+        }
+        if (changes.subtasks && JSON.stringify(changes.subtasks) !== JSON.stringify(existingTask.subtasks || [])) {
+          newLogs.push({ id: `log-${Date.now()}-sub`, message: `Updated subtasks checklist`, timestamp: new Date().toISOString() });
+        }
+        if (changes.tags && JSON.stringify(changes.tags) !== JSON.stringify(existingTask.tags || [])) {
+          newLogs.push({ id: `log-${Date.now()}-tags`, message: `Updated custom tags`, timestamp: new Date().toISOString() });
+        }
+
+        const taskChanges = {
+          ...changes,
+          activityLog: [...(existingTask.activityLog || []), ...newLogs]
+        };
+
+        tasksAdapter.updateOne(state, { id, changes: taskChanges });
+      }
+    },
     deleteTask: tasksAdapter.removeOne,
     moveTask(state, action) {
       const { taskId, sourceStatus, destinationStatus, sourceIndex, destinationIndex } = action.payload;
@@ -125,6 +175,13 @@ const tasksSlice = createSlice({
       } else {
         state.entities[taskId].status = destinationStatus;
         
+        // Add activity log for cross-column drag
+        const task = state.entities[taskId];
+        task.activityLog = [
+          ...(task.activityLog || []),
+          { id: `log-${Date.now()}`, message: `Moved from ${sourceStatus} to ${destinationStatus}`, timestamp: new Date().toISOString() }
+        ];
+
         const sourceTasks = allTasks
           .filter(t => t.status === sourceStatus && t.id !== taskId)
           .sort((a, b) => a.order - b.order);

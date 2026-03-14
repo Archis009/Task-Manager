@@ -47,7 +47,7 @@ export default function Sidebar() {
           <div className="flex h-6 w-6 items-center justify-center rounded-md bg-purple-600 text-white">
             <span className="text-xs">M</span>
           </div>
-          <span className="text-xl font-bold tracking-tight">Project M.</span>
+          <span className="text-xl font-bold tracking-tight">Task Manager</span>
         </div>
         <button 
           onClick={() => dispatch(toggleSidebar())}

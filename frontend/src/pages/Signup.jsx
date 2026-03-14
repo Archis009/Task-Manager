@@ -65,7 +65,7 @@ export default function Signup() {
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-[#5030E5]">
             <CheckSquare size={24} />
           </div>
-          <span className="text-2xl font-bold tracking-tight">Project M.</span>
+          <span className="text-2xl font-bold tracking-tight">Task Manager</span>
         </div>
 
         <div className="relative z-10 max-w-lg">
@@ -78,7 +78,7 @@ export default function Signup() {
         </div>
 
         <div className="relative z-10">
-          <p className="text-sm font-medium text-white/60">© 2026 Project M. All rights reserved.</p>
+          <p className="text-sm font-medium text-white/60">© 2026 Task Manager. All rights reserved.</p>
         </div>
       </div>
 
@@ -90,12 +90,12 @@ export default function Signup() {
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#5030E5] text-white">
               <CheckSquare size={24} />
             </div>
-            <span className="text-2xl font-bold tracking-tight text-gray-900">Project M.</span>
+            <span className="text-2xl font-bold tracking-tight text-gray-900">Task Manager</span>
           </div>
 
           <div className="mb-10 text-center lg:text-left">
             <h2 className="text-3xl font-bold text-gray-900 mb-2 tracking-tight">Create an account</h2>
-            <p className="text-gray-500 text-[15px]">Sign up to get started with Project M.</p>
+            <p className="text-gray-500 text-[15px]">Sign up to get started with Task Manager.</p>
           </div>
 
           {(isError || passwordError) && (
