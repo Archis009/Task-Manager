@@ -31,6 +31,7 @@ const initialTasks = [
     assignees: ['/avatars/avatar-1.png', '/avatars/avatar-2.png', '/avatars/avatar-3.png'],
     order: 0,
     dueDate: today,
+    tags: ['UX', 'Planning'],
   },
   {
     id: 'task-2',
@@ -43,6 +44,7 @@ const initialTasks = [
     assignees: ['/avatars/avatar-4.png', '/avatars/avatar-1.png'],
     order: 1,
     dueDate: tomorrow,
+    tags: ['Data', 'MVP'],
   },
   {
     id: 'task-3',
@@ -55,6 +57,7 @@ const initialTasks = [
     assignees: ['/avatars/avatar-2.png', '/avatars/avatar-4.png'],
     order: 2,
     dueDate: today,
+    tags: ['Design', 'Core'],
   },
   {
     id: 'task-4',
@@ -67,6 +70,7 @@ const initialTasks = [
     assignees: ['/avatars/avatar-3.png', '/avatars/avatar-1.png'],
     order: 0,
     dueDate: yesterday,
+    tags: ['API'],
   },
   {
     id: 'task-5',
@@ -79,6 +83,7 @@ const initialTasks = [
     assignees: ['/avatars/avatar-1.png', '/avatars/avatar-4.png'],
     order: 0,
     dueDate: today,
+    tags: ['Phase 1'],
   },
   {
     id: 'task-6',
@@ -91,6 +96,7 @@ const initialTasks = [
     assignees: ['/avatars/avatar-2.png', '/avatars/avatar-3.png', '/avatars/avatar-4.png'],
     order: 1,
     dueDate: yesterday,
+    tags: ['UI', 'Phase 1'],
   }
 ];
 

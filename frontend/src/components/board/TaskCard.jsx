@@ -11,6 +11,27 @@ const priorityColors = {
   'Completed': 'bg-green-100 text-green-600',
 };
 
+const tagColors = [
+  'bg-blue-100 text-blue-700',
+  'bg-purple-100 text-purple-700',
+  'bg-pink-100 text-pink-700',
+  'bg-indigo-100 text-indigo-700',
+  'bg-teal-100 text-teal-700',
+  'bg-cyan-100 text-cyan-700',
+  'bg-emerald-100 text-emerald-700',
+  'bg-rose-100 text-rose-700',
+];
+
+const getTagColor = (tagName) => {
+  if (!tagName) return tagColors[0];
+  let hash = 0;
+  for (let i = 0; i < tagName.length; i++) {
+    hash = tagName.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const index = Math.abs(hash) % tagColors.length;
+  return tagColors[index];
+};
+
 const getDueDateInfo = (dueDateStr) => {
   if (!dueDateStr) return null;
   
@@ -54,13 +75,23 @@ export default function TaskCard({ task, index }) {
             )}
           >
             {/* Header */}
-            <div className="mb-2 flex items-center justify-between">
-              <span className={cn("rounded px-2 py-1 text-[12px] font-medium", pColor)}>
-                {task.priority}
-              </span>
+            <div className="mb-2 flex items-start justify-between">
+              <div className="flex flex-wrap gap-1.5 pr-4">
+                <span className={cn("rounded px-2 py-1 text-[12px] font-medium", pColor)}>
+                  {task.priority}
+                </span>
+                {task.tags?.map((tag, idx) => (
+                  <span 
+                    key={idx} 
+                    className={cn("rounded px-2 py-1 text-[12px] font-medium whitespace-nowrap", getTagColor(tag))}
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
               <button 
                 onClick={() => setIsEditModalOpen(true)} 
-                className="text-gray-900 hover:text-purple-600 z-10"
+                className="text-gray-900 hover:text-purple-600 z-10 shrink-0"
               >
                 <MoreHorizontal className="h-4 w-4" />
               </button>

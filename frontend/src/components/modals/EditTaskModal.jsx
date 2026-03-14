@@ -15,6 +15,8 @@ export default function EditTaskModal({ isOpen, onClose, task }) {
   });
 
   const [subtasks, setSubtasks] = useState([]);
+  const [tags, setTags] = useState([]);
+  const [tagInput, setTagInput] = useState('');
 
   useEffect(() => {
     if (task) {
@@ -27,6 +29,7 @@ export default function EditTaskModal({ isOpen, onClose, task }) {
         dueDate: task.dueDate || '',
       });
       setSubtasks(task.subtasks || []);
+      setTags(task.tags || []);
     }
   }, [task]);
 
@@ -41,9 +44,28 @@ export default function EditTaskModal({ isOpen, onClose, task }) {
 
     const validSubtasks = subtasks.filter(st => st.title.trim() !== '');
 
-    dispatch(updateTask({ id: task.id, changes: { ...formData, subtasks: validSubtasks } }));
+    dispatch(updateTask({ id: task.id, changes: { ...formData, subtasks: validSubtasks, tags: tags } }));
     toast.success('Task updated successfully!');
     onClose();
+  };
+
+  const handleAddTag = (e) => {
+    e.preventDefault();
+    const newTag = tagInput.trim();
+    if (newTag && !tags.includes(newTag)) {
+      setTags([...tags, newTag]);
+    }
+    setTagInput('');
+  };
+
+  const handleRemoveTag = (tagToRemove) => {
+    setTags(tags.filter(tag => tag !== tagToRemove));
+  };
+
+  const handleTagKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      handleAddTag(e);
+    }
   };
 
   const handleAddSubtask = () => {
@@ -133,6 +155,43 @@ export default function EditTaskModal({ isOpen, onClose, task }) {
               onChange={(e) => setFormData({ ...formData, dueDate: e.target.value })}
               className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500"
             />
+          </div>
+
+          <div>
+            <label className="mb-1 block text-sm font-medium text-gray-700">Tags (Custom Fields)</label>
+            <div className="flex gap-2 mb-2">
+              <input
+                type="text"
+                value={tagInput}
+                onChange={(e) => setTagInput(e.target.value)}
+                onKeyDown={handleTagKeyDown}
+                placeholder="Add a tag and press Enter"
+                className="flex-1 rounded-lg border border-gray-300 px-4 py-2 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500"
+              />
+              <button
+                type="button"
+                onClick={handleAddTag}
+                className="px-4 py-2 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition-colors font-medium text-sm"
+              >
+                Add
+              </button>
+            </div>
+            {tags.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {tags.map((tag) => (
+                  <span key={tag} className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
+                    {tag}
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveTag(tag)}
+                      className="text-gray-400 hover:text-red-500 transition-colors"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
 
           <div>
