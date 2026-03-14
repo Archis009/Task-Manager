@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { toggleSidebar } from '@/features/projects/projectsSlice';
-import { setFilterPriority, setFilterDate } from '@/features/tasks/tasksSlice';
+import { setFilterPriority, setFilterDate, selectAllTasks } from '@/features/tasks/tasksSlice';
 import { Search, Calendar, MessageSquare, Bell, ChevronDown, Filter, CalendarDays, Share2, PanelLeftDashed, LayoutGrid, Edit2, Link2, Plus, Menu } from 'lucide-react';
 
 export default function Header() {
@@ -9,9 +9,20 @@ export default function Header() {
   const { projects, activeProjectId, sidebarOpen } = useSelector(state => state.projects);
   const { user } = useSelector(state => state.auth);
   const activeProj = projects.find(p => p.id === activeProjectId);
+  const tasks = useSelector(selectAllTasks);
   const filterPriority = useSelector((state) => state.tasks.filterPriority);
   const filterDate = useSelector((state) => state.tasks.filterDate);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [isBellOpen, setIsBellOpen] = useState(false);
+
+  // Calculate overdue tasks
+  const overdueTasksCount = tasks?.filter(task => {
+    if (!task.dueDate) return false;
+    const dueDate = new Date(task.dueDate + 'T00:00:00');
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return dueDate.getTime() < today.getTime() && task.status !== 'done';
+  }).length || 0;
 
   return (
     <header className="flex flex-col bg-white">
@@ -42,9 +53,34 @@ export default function Header() {
           <div className="flex items-center space-x-5 text-gray-500">
             <Calendar className="h-[22px] w-[22px] cursor-pointer hover:text-gray-900 transition-colors" />
             <MessageSquare className="h-[22px] w-[22px] cursor-pointer hover:text-gray-900 transition-colors" />
-            <div className="relative cursor-pointer hover:text-gray-900 transition-colors">
+            <div 
+              className="relative cursor-pointer hover:text-gray-900 transition-colors"
+              onClick={() => setIsBellOpen(!isBellOpen)}
+            >
               <Bell className="h-[22px] w-[22px]" />
-              <div className="absolute right-0 top-0 h-2 w-2 rounded-full bg-red-500 ring-2 ring-white" />
+              {overdueTasksCount > 0 && (
+                <div className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white ring-2 ring-white">
+                  {overdueTasksCount}
+                </div>
+              )}
+              
+              {isBellOpen && (
+                <div className="absolute right-0 top-full mt-2 w-64 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 z-50 p-4">
+                  {overdueTasksCount > 0 ? (
+                    <div>
+                      <h4 className="font-semibold text-gray-900 mb-1">Alerts</h4>
+                      <p className="text-sm text-red-600">
+                        You have {overdueTasksCount} task{overdueTasksCount === 1 ? '' : 's'} past due!
+                      </p>
+                    </div>
+                  ) : (
+                    <div>
+                      <h4 className="font-semibold text-gray-900 mb-1">Alerts</h4>
+                      <p className="text-sm text-gray-500">You're all caught up!</p>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
           

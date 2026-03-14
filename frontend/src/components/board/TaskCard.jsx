@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Draggable } from '@hello-pangea/dnd';
-import { MoreHorizontal, MessageSquare, Paperclip } from 'lucide-react';
+import { MoreHorizontal, MessageSquare, Paperclip, Calendar } from 'lucide-react';
 import EditTaskModal from '../modals/EditTaskModal';
 import { cn } from '@/lib/utils';
 
@@ -9,6 +9,31 @@ const priorityColors = {
   'Medium': 'bg-yellow-100 text-yellow-600',
   'High': 'bg-red-100 text-red-600',
   'Completed': 'bg-green-100 text-green-600',
+};
+
+const getDueDateInfo = (dueDateStr) => {
+  if (!dueDateStr) return null;
+  
+  // Use T00:00:00 to parse correctly in local time instead of UTC offset shifting
+  const dueDate = new Date(dueDateStr + 'T00:00:00');
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  
+  const diffTime = dueDate.getTime() - today.getTime();
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  
+  let color = 'text-gray-500 bg-gray-50 border-gray-200';
+  let dateText = dueDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+  if (diffDays < 0) {
+    color = 'text-red-600 bg-red-50 border-red-200';
+    dateText = 'Overdue';
+  } else if (diffDays === 0) {
+    color = 'text-yellow-600 bg-yellow-50 border-yellow-200';
+    dateText = 'Due Today';
+  }
+
+  return { color, dateText };
 };
 
 export default function TaskCard({ task, index }) {
@@ -43,7 +68,7 @@ export default function TaskCard({ task, index }) {
             
             {/* Content */}
             <h3 className="mb-1.5 text-[18px] font-semibold text-gray-900">{task.title}</h3>
-            {(task.description || task.coverImage) && (
+            {(task.description || task.coverImage || task.dueDate) && (
               <div className="mb-6 space-y-3">
                 {task.description && (
                   <p className="text-[12px] text-gray-500 leading-relaxed">
@@ -56,6 +81,19 @@ export default function TaskCard({ task, index }) {
                     alt="Task Cover" 
                     className="w-full h-32 object-cover rounded-lg"
                   />
+                )}
+                {task.dueDate && (
+                  <div>
+                    {(() => {
+                      const { color, dateText } = getDueDateInfo(task.dueDate);
+                      return (
+                        <div className={cn("inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-md text-[12px] font-medium border", color)}>
+                          <Calendar className="h-3.5 w-3.5" />
+                          <span>{dateText}</span>
+                        </div>
+                      );
+                    })()}
+                  </div>
                 )}
               </div>
             )}

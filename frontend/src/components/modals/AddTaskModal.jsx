@@ -11,6 +11,7 @@ export default function AddTaskModal({ isOpen, onClose, defaultStatus = 'todo' }
     description: '',
     priority: 'Low',
     status: defaultStatus,
+    dueDate: '',
   });
 
   if (!isOpen) return null;
@@ -28,6 +29,7 @@ export default function AddTaskModal({ isOpen, onClose, defaultStatus = 'todo' }
       description: formData.description,
       priority: formData.priority,
       status: formData.status,
+      dueDate: formData.dueDate,
       comments: 0,
       files: 0,
       assignees: ['https://i.pravatar.cc/150?img=11'],
@@ -36,7 +38,7 @@ export default function AddTaskModal({ isOpen, onClose, defaultStatus = 'todo' }
 
     dispatch(addTask(newTask));
     toast.success('Task created successfully!');
-    setFormData({ title: '', description: '', priority: 'Low', status: defaultStatus });
+    setFormData({ title: '', description: '', priority: 'Low', status: defaultStatus, dueDate: '' });
     onClose();
   };
 
@@ -98,6 +100,16 @@ export default function AddTaskModal({ isOpen, onClose, defaultStatus = 'todo' }
                 <option value="done">Done</option>
               </select>
             </div>
+          </div>
+
+          <div>
+            <label className="mb-1 block text-sm font-medium text-gray-700">Due Date</label>
+            <input
+              type="date"
+              value={formData.dueDate}
+              onChange={(e) => setFormData({ ...formData, dueDate: e.target.value })}
+              className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500"
+            />
           </div>
 
           <div className="mt-8 flex justify-end space-x-3">
