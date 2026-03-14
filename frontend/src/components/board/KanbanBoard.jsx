@@ -13,6 +13,8 @@ const columns = [
 export default function KanbanBoard() {
   const dispatch = useDispatch();
   const tasks = useSelector(selectAllTasks);
+  const filterPriority = useSelector((state) => state.tasks.filterPriority);
+  const filterDate = useSelector((state) => state.tasks.filterDate);
 
   const onDragEnd = (result) => {
     const { source, destination, draggableId } = result;
@@ -41,9 +43,18 @@ export default function KanbanBoard() {
     <div className="flex h-full w-full gap-6 overflow-x-auto pb-4">
       <DragDropContext onDragEnd={onDragEnd}>
         {columns.map((col) => {
-          const columnTasks = tasks
+          let columnTasks = tasks
             .filter((t) => t.status === col.id)
             .sort((a, b) => a.order - b.order);
+
+          if (filterPriority !== 'All') {
+            columnTasks = columnTasks.filter(t => t.priority === filterPriority);
+          }
+          
+          if (filterDate === 'Today') {
+            const todayStr = new Date().toLocaleDateString('en-CA');
+            columnTasks = columnTasks.filter(t => t.dueDate === todayStr);
+          }
 
           return (
             <KanbanColumn

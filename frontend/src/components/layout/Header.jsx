@@ -1,11 +1,16 @@
+import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { toggleSidebar } from '@/features/projects/projectsSlice';
+import { setFilterPriority, setFilterDate } from '@/features/tasks/tasksSlice';
 import { Search, Calendar, MessageSquare, Bell, ChevronDown, Filter, CalendarDays, Share2, PanelLeftDashed, LayoutGrid, Edit2, Link2, Plus, Menu } from 'lucide-react';
 
 export default function Header() {
   const dispatch = useDispatch();
   const { projects, activeProjectId, sidebarOpen } = useSelector(state => state.projects);
   const activeProj = projects.find(p => p.id === activeProjectId);
+  const filterPriority = useSelector((state) => state.tasks.filterPriority);
+  const filterDate = useSelector((state) => state.tasks.filterDate);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   return (
     <header className="flex flex-col bg-white">
@@ -96,12 +101,51 @@ export default function Header() {
         {/* Filters row */}
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <button className="flex h-10 items-center space-x-2 rounded-md border border-gray-300 px-3 text-gray-500 hover:bg-gray-50 transition-colors">
-              <Filter className="h-[15px] w-[15px]" strokeWidth={2.5} />
-              <span className="font-medium text-[15px] ml-1">Filter</span>
-              <ChevronDown className="h-[15px] w-[15px] ml-1" />
-            </button>
-            <button className="flex h-10 items-center space-x-2 rounded-md border border-gray-300 px-3 text-gray-500 hover:bg-gray-50 transition-colors">
+            <div className="relative">
+              <button 
+                onClick={() => setIsFilterOpen(!isFilterOpen)}
+                className="flex h-10 items-center space-x-2 rounded-md border border-gray-300 px-3 text-gray-500 hover:bg-gray-50 transition-colors"
+                aria-haspopup="true"
+                aria-expanded={isFilterOpen}
+              >
+                <Filter className="h-[15px] w-[15px]" strokeWidth={2.5} />
+                <span className="font-medium text-[15px] ml-1">
+                  {filterPriority === 'All' ? 'Priorities' : filterPriority}
+                </span>
+                <ChevronDown className="h-[15px] w-[15px] ml-1" />
+              </button>
+              
+              {isFilterOpen && (
+                <div className="absolute left-0 mt-2 w-48 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 z-50">
+                  <div className="py-1">
+                    {['All', 'Low', 'Medium', 'High', 'Completed'].map((priority) => (
+                      <button
+                        key={priority}
+                        onClick={() => {
+                          dispatch(setFilterPriority(priority));
+                          setIsFilterOpen(false);
+                        }}
+                        className={`block w-full text-left px-4 py-2 text-sm ${
+                          filterPriority === priority 
+                            ? 'bg-purple-50 text-purple-700 font-medium' 
+                            : 'text-gray-700 hover:bg-gray-50'
+                        }`}
+                      >
+                        {priority === 'All' ? 'All Priorities' : priority}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+            <button 
+              onClick={() => dispatch(setFilterDate(filterDate === 'All' ? 'Today' : 'All'))}
+              className={`flex h-10 items-center space-x-2 rounded-md border px-3 transition-colors ${
+                filterDate === 'Today' 
+                  ? 'border-purple-300 bg-purple-50 text-purple-700 font-medium' 
+                  : 'border-gray-300 text-gray-500 hover:bg-gray-50'
+              }`}
+            >
               <CalendarDays className="h-[15px] w-[15px]" strokeWidth={2.5} />
               <span className="font-medium text-[15px] ml-1">Today</span>
               <ChevronDown className="h-[15px] w-[15px] ml-1" />

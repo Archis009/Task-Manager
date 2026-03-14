@@ -4,9 +4,21 @@ const tasksAdapter = createEntityAdapter();
 
 const initialState = tasksAdapter.getInitialState({
   status: 'idle',
+  filterPriority: 'All', // 'All', 'Low', 'High', 'Completed'
+  filterDate: 'All', // 'All', 'Today'
 });
 
 // Seed data
+// Note: We use local time formatting to generate "today" to avoid timezone mismatch.
+const getLocalDateString = (offsetDays = 0) => {
+  const d = new Date();
+  d.setDate(d.getDate() + offsetDays);
+  return d.toLocaleDateString('en-CA'); // 'YYYY-MM-DD' format in local time
+};
+
+const today = getLocalDateString(0);
+const tomorrow = getLocalDateString(1);
+const yesterday = getLocalDateString(-1);
 const initialTasks = [
   {
     id: 'task-1',
@@ -18,6 +30,7 @@ const initialTasks = [
     files: 0,
     assignees: ['/avatars/avatar-1.png', '/avatars/avatar-2.png', '/avatars/avatar-3.png'],
     order: 0,
+    dueDate: today,
   },
   {
     id: 'task-2',
@@ -29,6 +42,7 @@ const initialTasks = [
     files: 3,
     assignees: ['/avatars/avatar-4.png', '/avatars/avatar-1.png'],
     order: 1,
+    dueDate: tomorrow,
   },
   {
     id: 'task-3',
@@ -40,6 +54,7 @@ const initialTasks = [
     files: 5,
     assignees: ['/avatars/avatar-2.png', '/avatars/avatar-4.png'],
     order: 2,
+    dueDate: today,
   },
   {
     id: 'task-4',
@@ -51,6 +66,7 @@ const initialTasks = [
     files: 0,
     assignees: ['/avatars/avatar-3.png', '/avatars/avatar-1.png'],
     order: 0,
+    dueDate: yesterday,
   },
   {
     id: 'task-5',
@@ -62,6 +78,7 @@ const initialTasks = [
     files: 0,
     assignees: ['/avatars/avatar-1.png', '/avatars/avatar-4.png'],
     order: 0,
+    dueDate: today,
   },
   {
     id: 'task-6',
@@ -73,6 +90,7 @@ const initialTasks = [
     files: 15,
     assignees: ['/avatars/avatar-2.png', '/avatars/avatar-3.png', '/avatars/avatar-4.png'],
     order: 1,
+    dueDate: yesterday,
   }
 ];
 
@@ -118,11 +136,17 @@ const tasksSlice = createSlice({
           state.entities[t.id].order = i;
         });
       }
+    },
+    setFilterPriority(state, action) {
+      state.filterPriority = action.payload;
+    },
+    setFilterDate(state, action) {
+      state.filterDate = action.payload;
     }
   }
 });
 
-export const { addTask, updateTask, deleteTask, moveTask } = tasksSlice.actions;
+export const { addTask, updateTask, deleteTask, moveTask, setFilterPriority, setFilterDate } = tasksSlice.actions;
 
 export const {
   selectAll: selectAllTasks,
