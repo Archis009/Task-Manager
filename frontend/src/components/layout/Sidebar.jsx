@@ -1,4 +1,4 @@
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { toggleSidebar, setActiveProject } from '@/features/projects/projectsSlice';
 import { cn } from '@/lib/utils';
@@ -11,8 +11,10 @@ import {
   MoreHorizontal,
   ChevronLeft,
   Plus,
-  Lightbulb
+  Lightbulb,
+  LogOut
 } from 'lucide-react';
+import { logout, reset } from '../../features/auth/authSlice';
 
 const navItems = [
   { name: 'Home', path: '/home', icon: Home },
@@ -25,7 +27,15 @@ const navItems = [
 export default function Sidebar() {
   const dispatch = useDispatch();
   const location = useLocation();
+  const navigate = useNavigate();
   const { projects, activeProjectId, sidebarOpen } = useSelector(state => state.projects);
+  const { user } = useSelector(state => state.auth);
+
+  const onLogout = () => {
+    dispatch(logout());
+    dispatch(reset());
+    navigate('/login');
+  };
 
   if (!sidebarOpen) return null;
 
@@ -124,6 +134,30 @@ export default function Sidebar() {
             </button>
           </div>
         </div>
+        
+        {/* User profile / Logout */}
+        {user && (
+          <div className="mt-6 flex items-center justify-between mx-2 border-t border-gray-200 pt-4">
+            <div className="flex items-center gap-3 overflow-hidden">
+               <img 
+                  src={user.avatar || `https://ui-avatars.com/api/?name=${user.name}`}
+                  alt="" 
+                  className="h-10 w-10 rounded-full bg-purple-100" 
+                />
+               <div className="flex flex-col overflow-hidden text-left">
+                  <span className="truncate text-sm font-semibold text-gray-900">{user.name}</span>
+                  <span className="truncate text-xs text-gray-500">{user.email}</span>
+               </div>
+            </div>
+            <button 
+              onClick={onLogout}
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-gray-400 hover:bg-red-50 hover:text-red-600 transition-colors"
+              title="Logout"
+            >
+              <LogOut className="h-5 w-5" />
+            </button>
+          </div>
+        )}
       </div>
     </aside>
   );

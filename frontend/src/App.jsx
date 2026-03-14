@@ -6,15 +6,28 @@ import Home from './pages/Home';
 import Messages from './pages/Messages';
 import Members from './pages/Members';
 import Settings from './pages/Settings';
+import Login from './pages/Login';
+import Signup from './pages/Signup';
+import ProtectedRoute from './components/ProtectedRoute';
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<DashboardLayout />}>
-          <Route index element={<Navigate to="/projects/active" replace />} />
-          <Route path="home" element={<Home />} />
-          <Route path="messages" element={<Messages />} />
+        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        
+        {/* Protected Dashboard Routes */}
+        <Route 
+          element={
+            <ProtectedRoute>
+              <DashboardLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route path="/home" element={<Home />} />
+          <Route path="/messages" element={<Messages />} /> {/* Messages route was missing in the provided diff, re-adding it */}
           <Route path="projects/:projectId" element={<Dashboard />} />
           <Route path="members" element={<Members />} />
           <Route path="settings" element={<Settings />} />

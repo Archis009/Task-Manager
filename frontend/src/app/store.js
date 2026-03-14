@@ -2,6 +2,7 @@ import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import { persistStore, persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist';
 import tasksReducer from '../features/tasks/tasksSlice';
 import projectsReducer from '../features/projects/projectsSlice';
+import authReducer from '../features/auth/authSlice';
 
 const customStorage = {
   getItem: (key) => Promise.resolve(window.localStorage.getItem(key)),
@@ -17,6 +18,7 @@ const customStorage = {
 const rootReducer = combineReducers({
   tasks: tasksReducer,
   projects: projectsReducer,
+  auth: authReducer,
 });
 
 const persistConfig = {
