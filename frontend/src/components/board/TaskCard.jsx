@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Draggable } from '@hello-pangea/dnd';
-import { MoreHorizontal, MessageSquare, Paperclip, Calendar } from 'lucide-react';
+import { MoreHorizontal, MessageSquare, Paperclip, Calendar, ListTodo } from 'lucide-react';
 import EditTaskModal from '../modals/EditTaskModal';
 import { cn } from '@/lib/utils';
 
@@ -117,6 +117,12 @@ export default function TaskCard({ task, index }) {
               
               {/* Stats */}
               <div className="flex items-center space-x-3 text-xs font-medium text-gray-500">
+                {task.subtasks && task.subtasks.length > 0 && (
+                  <div className="flex items-center space-x-1.5 hover:text-gray-900 transition-colors cursor-pointer" title="Subtasks">
+                    <ListTodo className="h-4 w-4" />
+                    <span>{task.subtasks.filter(st => st.completed).length}/{task.subtasks.length}</span>
+                  </div>
+                )}
                 <div className="flex items-center space-x-1.5 hover:text-gray-900 transition-colors cursor-pointer">
                   <MessageSquare className="h-4 w-4" />
                   <span>{task.comments} comments</span>

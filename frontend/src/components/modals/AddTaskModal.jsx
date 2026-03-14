@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { X } from 'lucide-react';
+import { X, Plus, Trash2 } from 'lucide-react';
 import { addTask } from '@/features/tasks/tasksSlice';
 import toast from 'react-hot-toast';
 
@@ -13,8 +13,21 @@ export default function AddTaskModal({ isOpen, onClose, defaultStatus = 'todo' }
     status: defaultStatus,
     dueDate: '',
   });
+  const [subtasks, setSubtasks] = useState([]);
 
   if (!isOpen) return null;
+
+  const handleAddSubtask = () => {
+    setSubtasks([...subtasks, { id: `st-${Date.now()}`, title: '', completed: false }]);
+  };
+
+  const handleSubtaskChange = (id, value) => {
+    setSubtasks(subtasks.map(st => st.id === id ? { ...st, title: value } : st));
+  };
+
+  const handleRemoveSubtask = (id) => {
+    setSubtasks(subtasks.filter(st => st.id !== id));
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -23,6 +36,8 @@ export default function AddTaskModal({ isOpen, onClose, defaultStatus = 'todo' }
       return;
     }
 
+    const validSubtasks = subtasks.filter(st => st.title.trim() !== '');
+
     const newTask = {
       id: `task-${Date.now()}`,
       title: formData.title,
@@ -30,6 +45,7 @@ export default function AddTaskModal({ isOpen, onClose, defaultStatus = 'todo' }
       priority: formData.priority,
       status: formData.status,
       dueDate: formData.dueDate,
+      subtasks: validSubtasks,
       comments: 0,
       files: 0,
       assignees: ['https://i.pravatar.cc/150?img=11'],
@@ -39,6 +55,7 @@ export default function AddTaskModal({ isOpen, onClose, defaultStatus = 'todo' }
     dispatch(addTask(newTask));
     toast.success('Task created successfully!');
     setFormData({ title: '', description: '', priority: 'Low', status: defaultStatus, dueDate: '' });
+    setSubtasks([]);
     onClose();
   };
 
@@ -110,6 +127,42 @@ export default function AddTaskModal({ isOpen, onClose, defaultStatus = 'todo' }
               onChange={(e) => setFormData({ ...formData, dueDate: e.target.value })}
               className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500"
             />
+          </div>
+
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <label className="block text-sm font-medium text-gray-700">Subtasks</label>
+              <button
+                type="button"
+                onClick={handleAddSubtask}
+                className="flex items-center text-sm text-purple-600 hover:text-purple-700 font-medium"
+              >
+                <Plus className="h-4 w-4 mr-1" /> Add Subtask
+              </button>
+            </div>
+            
+            {subtasks.length > 0 && (
+              <div className="space-y-2 mb-2">
+                {subtasks.map((st) => (
+                  <div key={st.id} className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      value={st.title}
+                      onChange={(e) => handleSubtaskChange(st.id, e.target.value)}
+                      placeholder="e.g., Create wireframes"
+                      className="flex-1 rounded-lg border border-gray-300 px-3 py-1.5 text-sm focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveSubtask(st.id)}
+                      className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-md transition-colors"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="mt-8 flex justify-end space-x-3">

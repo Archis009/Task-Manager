@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { X, Trash2 } from 'lucide-react';
+import { X, Trash2, Plus } from 'lucide-react';
 import { updateTask, deleteTask } from '@/features/tasks/tasksSlice';
 import toast from 'react-hot-toast';
 
@@ -14,6 +14,8 @@ export default function EditTaskModal({ isOpen, onClose, task }) {
     dueDate: '',
   });
 
+  const [subtasks, setSubtasks] = useState([]);
+
   useEffect(() => {
     if (task) {
       // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -24,6 +26,7 @@ export default function EditTaskModal({ isOpen, onClose, task }) {
         status: task.status,
         dueDate: task.dueDate || '',
       });
+      setSubtasks(task.subtasks || []);
     }
   }, [task]);
 
@@ -36,9 +39,23 @@ export default function EditTaskModal({ isOpen, onClose, task }) {
       return;
     }
 
-    dispatch(updateTask({ id: task.id, changes: formData }));
+    const validSubtasks = subtasks.filter(st => st.title.trim() !== '');
+
+    dispatch(updateTask({ id: task.id, changes: { ...formData, subtasks: validSubtasks } }));
     toast.success('Task updated successfully!');
     onClose();
+  };
+
+  const handleAddSubtask = () => {
+    setSubtasks([...subtasks, { id: `st-${Date.now()}`, title: '', completed: false }]);
+  };
+
+  const handleSubtaskChange = (id, field, value) => {
+    setSubtasks(subtasks.map(st => st.id === id ? { ...st, [field]: value } : st));
+  };
+
+  const handleRemoveSubtask = (id) => {
+    setSubtasks(subtasks.filter(st => st.id !== id));
   };
 
   const handleDelete = () => {
@@ -116,6 +133,50 @@ export default function EditTaskModal({ isOpen, onClose, task }) {
               onChange={(e) => setFormData({ ...formData, dueDate: e.target.value })}
               className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500"
             />
+          </div>
+
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <label className="block text-sm font-medium text-gray-700">Subtasks</label>
+              <button
+                type="button"
+                onClick={handleAddSubtask}
+                className="flex items-center text-sm text-purple-600 hover:text-purple-700 font-medium"
+              >
+                <Plus className="h-4 w-4 mr-1" /> Add Subtask
+              </button>
+            </div>
+            
+            {subtasks.length > 0 && (
+              <div className="space-y-2 mb-2 max-h-32 overflow-y-auto pr-1">
+                {subtasks.map((st) => (
+                  <div key={st.id} className="flex items-center gap-2 group">
+                    <input
+                      type="checkbox"
+                      checked={st.completed}
+                      onChange={(e) => handleSubtaskChange(st.id, 'completed', e.target.checked)}
+                      className="h-4 w-4 rounded border-gray-300 text-purple-600 focus:ring-purple-500 cursor-pointer"
+                    />
+                    <input
+                      type="text"
+                      value={st.title}
+                      onChange={(e) => handleSubtaskChange(st.id, 'title', e.target.value)}
+                      placeholder="e.g., Create wireframes"
+                      className={`flex-1 rounded-lg border border-transparent px-2 py-1.5 text-sm outline-none transition-all group-hover:border-gray-200 focus:border-purple-400 focus:bg-white ${
+                        st.completed ? 'text-gray-400 line-through' : 'text-gray-700'
+                      }`}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveSubtask(st.id)}
+                      className="p-1.5 text-gray-400 opacity-0 group-hover:opacity-100 hover:text-red-500 hover:bg-red-50 rounded-md transition-all"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="mt-8 flex items-center justify-between">
