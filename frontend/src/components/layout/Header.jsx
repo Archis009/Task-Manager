@@ -1,8 +1,10 @@
-import { useSelector } from 'react-redux';
-import { Search, Calendar, MessageSquare, Bell, ChevronDown, Filter, CalendarDays, Share2, PanelLeftDashed, LayoutGrid, Edit2, Link2, Plus } from 'lucide-react';
+import { useSelector, useDispatch } from 'react-redux';
+import { toggleSidebar } from '@/features/projects/projectsSlice';
+import { Search, Calendar, MessageSquare, Bell, ChevronDown, Filter, CalendarDays, Share2, PanelLeftDashed, LayoutGrid, Edit2, Link2, Plus, Menu } from 'lucide-react';
 
 export default function Header() {
-  const { projects, activeProjectId } = useSelector(state => state.projects);
+  const dispatch = useDispatch();
+  const { projects, activeProjectId, sidebarOpen } = useSelector(state => state.projects);
   const activeProj = projects.find(p => p.id === activeProjectId);
 
   return (
@@ -10,13 +12,23 @@ export default function Header() {
       {/* Top row */}
       <div className="flex h-[88px] items-center justify-between border-b border-gray-200 px-8">
         {/* Left side: Search */}
-        <div className="flex w-[400px] items-center space-x-2 rounded-md bg-[#F5F5F5] px-4 py-2.5 text-gray-500 focus-within:ring-1 focus-within:ring-purple-500">
-          <Search className="h-4 w-4" />
-          <input 
-            type="text"
-            placeholder="Search for anything..."
-            className="w-full bg-transparent px-1 outline-none text-sm placeholder:text-gray-400"
-          />
+        <div className="flex items-center space-x-4">
+          {!sidebarOpen && (
+            <button 
+              onClick={() => dispatch(toggleSidebar())}
+              className="flex h-8 w-8 items-center justify-center rounded-md hover:bg-gray-100 text-gray-500 transition-colors"
+            >
+              <Menu className="h-5 w-5" />
+            </button>
+          )}
+          <div className="flex w-[400px] items-center space-x-2 rounded-md bg-[#F5F5F5] px-4 py-2.5 text-gray-500 focus-within:ring-1 focus-within:ring-purple-500">
+            <Search className="h-4 w-4" />
+            <input 
+              type="text"
+              placeholder="Search for anything..."
+              className="w-full bg-transparent px-1 outline-none text-sm placeholder:text-gray-400"
+            />
+          </div>
         </div>
 
         {/* Right side: Icons + Profile */}
