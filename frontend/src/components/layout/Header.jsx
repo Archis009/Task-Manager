@@ -7,6 +7,7 @@ import { Search, Calendar, MessageSquare, Bell, ChevronDown, Filter, CalendarDay
 export default function Header() {
   const dispatch = useDispatch();
   const { projects, activeProjectId, sidebarOpen } = useSelector(state => state.projects);
+  const { user } = useSelector(state => state.auth);
   const activeProj = projects.find(p => p.id === activeProjectId);
   const filterPriority = useSelector((state) => state.tasks.filterPriority);
   const filterDate = useSelector((state) => state.tasks.filterDate);
@@ -49,14 +50,14 @@ export default function Header() {
           
           <div className="flex items-center space-x-4">
             <div className="text-right">
-              <p className="text-[15px] font-medium text-gray-900">Palak Jain</p>
-              <p className="text-[13px] text-gray-500">Rajasthan, India</p>
+              <p className="text-[15px] font-medium text-gray-900">{user?.name || 'Guest'}</p>
+              <p className="text-[13px] text-gray-500 capitalize">{user?.email || 'Not logged in'}</p>
             </div>
             <div className="flex items-center space-x-2 cursor-pointer group">
               <img 
-                src="https://i.pravatar.cc/150?u=palak" 
+                src={user?.avatar || `https://ui-avatars.com/api/?name=${user?.name || 'Guest'}`} 
                 alt="Profile" 
-                className="h-[38px] w-[38px] rounded-full object-cover"
+                className="h-[38px] w-[38px] rounded-full object-cover bg-purple-100"
               />
               <ChevronDown className="h-4 w-4 text-gray-500 group-hover:text-gray-900" />
             </div>
