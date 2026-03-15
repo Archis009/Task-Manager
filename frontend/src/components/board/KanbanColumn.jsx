@@ -9,7 +9,7 @@ export default function KanbanColumn({ columnId, title, colorMarker, tasks }) {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   return (
-    <div className="flex w-full min-w-[320px] max-w-[360px] flex-col rounded-[20px] bg-[#F5F5F5] px-5 py-5">
+    <div className="flex h-max w-full min-w-[320px] max-w-[360px] flex-col rounded-[20px] bg-[#F5F5F5] px-5 py-5">
       {/* Column Header */}
       <div className="mb-6 flex items-center justify-between">
         <div className="flex items-center space-x-3">

@@ -34,7 +34,7 @@ const initialTasks = [
     assignees: ['/avatars/avatar-1.png', '/avatars/avatar-2.png', '/avatars/avatar-3.png'],
     order: 0,
     dueDate: today,
-    tags: ['UX', 'Planning'],
+    tags: [],
     activityLog: [{ id: 'log-task-1', message: 'Task created', timestamp: new Date().toISOString() }],
   },
   {
@@ -48,7 +48,7 @@ const initialTasks = [
     assignees: ['/avatars/avatar-4.png', '/avatars/avatar-1.png'],
     order: 1,
     dueDate: tomorrow,
-    tags: ['Data', 'MVP'],
+    tags: [],
     activityLog: [{ id: 'log-task-2', message: 'Task created', timestamp: new Date().toISOString() }],
   },
   {
@@ -62,7 +62,7 @@ const initialTasks = [
     assignees: ['/avatars/avatar-2.png', '/avatars/avatar-4.png'],
     order: 2,
     dueDate: today,
-    tags: ['Design', 'Core'],
+    tags: [],
     activityLog: [{ id: 'log-task-3', message: 'Task created', timestamp: new Date().toISOString() }],
   },
   {
@@ -76,7 +76,7 @@ const initialTasks = [
     assignees: ['/avatars/avatar-3.png', '/avatars/avatar-1.png'],
     order: 0,
     dueDate: yesterday,
-    tags: ['API'],
+    tags: [],
     activityLog: [{ id: 'log-task-4', message: 'Task created', timestamp: new Date().toISOString() }],
   },
   {
@@ -90,7 +90,7 @@ const initialTasks = [
     assignees: ['/avatars/avatar-1.png', '/avatars/avatar-4.png'],
     order: 0,
     dueDate: today,
-    tags: ['Phase 1'],
+    tags: [],
     activityLog: [{ id: 'log-task-5', message: 'Task created', timestamp: new Date().toISOString() }],
   },
   {
@@ -104,7 +104,7 @@ const initialTasks = [
     assignees: ['/avatars/avatar-2.png', '/avatars/avatar-3.png', '/avatars/avatar-4.png'],
     order: 1,
     dueDate: yesterday,
-    tags: ['UI', 'Phase 1'],
+    tags: [],
     activityLog: [{ id: 'log-task-6', message: 'Task created', timestamp: new Date().toISOString() }],
   }
 ];
