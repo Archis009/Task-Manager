@@ -3,11 +3,11 @@ import { useSelector, useDispatch } from 'react-redux';
 import { toggleSidebar, setActiveProject } from '@/features/projects/projectsSlice';
 import { cn } from '@/lib/utils';
 import { 
-  Home, 
-  MessageSquare, 
+  Home,
+  MessageSquare,
   CheckSquare, 
-  Users, 
-  Settings, 
+  Users,
+  Settings,
   MoreHorizontal,
   ChevronLeft,
   Plus,
@@ -17,11 +17,11 @@ import {
 import { logout, reset } from '../../features/auth/authSlice';
 
 const navItems = [
-  { name: 'Home', path: '/home', icon: Home },
-  { name: 'Messages', path: '/messages', icon: MessageSquare },
+  { name: 'Home', path: '/home', icon: Home, disabled: true },
+  { name: 'Messages', path: '/messages', icon: MessageSquare, disabled: true },
   { name: 'Tasks', path: '/projects/active', icon: CheckSquare },
-  { name: 'Members', path: '/members', icon: Users },
-  { name: 'Settings', path: '/settings', icon: Settings },
+  { name: 'Members', path: '/members', icon: Users, disabled: true },
+  { name: 'Settings', path: '/settings', icon: Settings, disabled: true },
 ];
 
 export default function Sidebar() {
@@ -63,6 +63,19 @@ export default function Sidebar() {
           {navItems.map((item) => {
             const Icon = item.icon;
             const isItemActive = location.pathname.startsWith(item.path) || (item.name === 'Tasks' && location.pathname.startsWith('/projects'));
+            if (item.disabled) {
+              return (
+                <div
+                  key={item.name}
+                  className="flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium text-gray-400 cursor-not-allowed"
+                  title="Coming soon"
+                >
+                  <Icon className="h-5 w-5" strokeWidth={2} />
+                  {item.name}
+                </div>
+              );
+            }
+
             return (
               <NavLink
                 key={item.name}
