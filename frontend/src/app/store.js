@@ -23,8 +23,24 @@ const rootReducer = combineReducers({
 
 const persistConfig = {
   key: 'root',
-  version: 1,
+  version: 2,
   storage: customStorage,
+  migrate: (state) => {
+    if (state && state._persist && state._persist.version < 2) {
+      // Clear old tags from persisted tasks
+      if (state.tasks && state.tasks.entities) {
+        const entities = { ...state.tasks.entities };
+        Object.keys(entities).forEach((id) => {
+          entities[id] = { ...entities[id], tags: [] };
+        });
+        state = {
+          ...state,
+          tasks: { ...state.tasks, entities },
+        };
+      }
+    }
+    return Promise.resolve(state);
+  },
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
