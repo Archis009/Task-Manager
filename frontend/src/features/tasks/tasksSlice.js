@@ -13,7 +13,10 @@ const initialState = tasksAdapter.getInitialState({
 const getLocalDateString = (offsetDays = 0) => {
   const d = new Date();
   d.setDate(d.getDate() + offsetDays);
-  return d.toLocaleDateString('en-CA'); // 'YYYY-MM-DD' format in local time
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`; // 'YYYY-MM-DD' format in local time
 };
 
 const today = getLocalDateString(0);

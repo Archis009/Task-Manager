@@ -52,7 +52,11 @@ export default function KanbanBoard() {
           }
           
           if (filterDate === 'Today') {
-            const todayStr = new Date().toLocaleDateString('en-CA');
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            const todayStr = `${year}-${month}-${day}`;
             columnTasks = columnTasks.filter(t => t.dueDate === todayStr);
           }
 
