@@ -1,7 +1,7 @@
 import React from 'react';
 import { DragDropContext } from '@hello-pangea/dnd';
 import { useDispatch, useSelector } from 'react-redux';
-import { moveTask, selectAllTasks } from '@/features/tasks/tasksSlice';
+import { moveTask, selectAllTasks } from '@/features/tasks/';
 import KanbanColumn from './KanbanColumn';
 
 const columns = [
