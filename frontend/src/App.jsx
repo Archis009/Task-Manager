@@ -7,6 +7,7 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import ProtectedRoute from './components/ProtectedRoute';
 
+// Main App component with routing setup
 export default function App() {
   return (
     <BrowserRouter>
