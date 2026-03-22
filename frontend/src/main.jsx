@@ -6,6 +6,7 @@ import { store, persistor } from './app/store'
 import './index.css'
 import App from './App.jsx'
 
+// Render the main App component wrapped with Redux Provider and PersistGate
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <Provider store={store}>
